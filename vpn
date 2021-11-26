@@ -1,0 +1,23 @@
+#!/bin/bash
+cd /folder/with/vpn/profiles
+unset options i
+while IFS= read -r -d $'\0' f; do
+  options[i++]="$f"
+done < <(find -type f -name "*.ovpn" -print0 )
+
+select vpn in "${options[@]}" "Exit"; do
+  case $vpn in
+    *.ovpn)
+      echo "Connecting to $vpn"
+      sudo openvpn $vpn > /dev/null &
+      sleep 4
+      break
+      ;;
+    "Exit")
+      break
+      ;;
+    *)
+      echo "¿?"
+      ;;
+  esac
+done
