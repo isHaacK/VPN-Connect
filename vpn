@@ -1,4 +1,9 @@
 #!/bin/bash
+if [ "$EUID" -ne 0 ]
+  then echo "Please run as root"
+  exit
+fi
+
 cd /folder/with/vpn/profiles
 unset options i
 while IFS= read -r -d $'\0' f; do
@@ -9,8 +14,7 @@ select vpn in "${options[@]}" "Exit"; do
   case $vpn in
     *.ovpn)
       echo "Connecting to $vpn"
-      sudo openvpn $vpn > /dev/null &
-      sleep 4
+      openvpn $vpn > /dev/null &
       break
       ;;
     "Exit")
